@@ -1,0 +1,17 @@
+<package>
+  <description brief="pal_tf_lookup">
+
+     pal_tf_lookup
+
+  </description>
+  <author>System User</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pal_tf_lookup</url>
+
+  <depend package="geometry_msgs" />
+  <depend package="tf" />
+
+</package>
+
+
