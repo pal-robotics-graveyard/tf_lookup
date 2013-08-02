@@ -4,6 +4,7 @@
 #include "pal_tf_lookup/lookupTransform.h"
 #include "pal_tf_lookup/TfLookupAction.h"
 #include <ros/ros.h>
+#include <ros/time.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 #include <actionlib/server/action_server.h>
@@ -14,9 +15,6 @@ namespace tf
   class TransformListener;
   class StampedTransform;
 }
-
-namespace ros
-{ class Time; }
 
 namespace pal
 {
@@ -29,25 +27,14 @@ namespace pal
        * @brief Advertises the services the plugin provides so they can be
        *        called from any ros node.
        */
-      virtual void advertiseServices(ros::NodeHandle &n);
-
-      /**
-       * @brief Starts the Actionlib server that allows asynchronous
-       *        tf lookup calls
-       */
-      virtual void startAlServer(ros::NodeHandle& n);
-
-      /**
-       * @brief To be called from time to time to check if everything is alright
-       */
-      virtual void periodicCheck();
+      virtual void start(ros::NodeHandle &n);
 
     private:
       typedef actionlib::ActionServer<pal_tf_lookup::TfLookupAction> AlServer;
 
+      void periodicCheck(const ros::TimerEvent& te);
       bool srvLookupTransform(pal_tf_lookup::lookupTransformRequest &req,
           pal_tf_lookup::lookupTransformResponse &res);
-      void resetTfListener();
       void alExecute();
       bool lookupTransform(const std::string& target,
           const std::string& source, const ros::Time& time,
@@ -58,6 +45,7 @@ namespace pal
       boost::mutex                           _tfListenerMutex;
       std::unique_ptr<tf::TransformListener> _tfListener;
       ros::Time                              _lastTime;
+      ros::Timer                             _check_timer;
 
       std::unique_ptr<AlServer>              _al_server;
       pal_tf_lookup::TfLookupResult          _al_result;
