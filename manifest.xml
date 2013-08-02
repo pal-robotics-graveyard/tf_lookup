@@ -11,6 +11,8 @@
 
   <depend package="geometry_msgs" />
   <depend package="tf" />
+  <depend package="actionlib"/>
+  <depend package="actionlib_msgs"/>
 
 </package>
 

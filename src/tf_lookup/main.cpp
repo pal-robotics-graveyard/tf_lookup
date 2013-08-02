@@ -2,6 +2,11 @@
 
 #include <ros/ros.h>
 
+void cb(const ros::TimerEvent& te, pal::TfLookup& tfl)
+{
+  tfl.periodicCheck();
+}
+
 int main(int argc, char *argv[])
 {
   ros::init(argc, argv, "tf_lookup");
@@ -11,14 +16,8 @@ int main(int argc, char *argv[])
   ros::NodeHandle nh;
   pal::TfLookup tfl;
   tfl.advertiseServices(nh);
-  ros::Rate rate(10);
+  tfl.startAlServer(nh);
 
-  while(ros::ok())
-  {
-    int i = 0;
-    ros::spinOnce();
-    if (++i%100)
-      tfl.periodicCheck();
-    rate.sleep();
-  }
+  ros::Timer t = nh.createTimer(ros::Duration(0.1), boost::bind(&cb, _1, boost::ref(tfl)));
+  ros::spin();
 }
