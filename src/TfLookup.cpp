@@ -28,64 +28,38 @@ namespace pal
     _al_server.reset(new AlServer(n, "tf_lookup",
           boost::bind(&TfLookup::oneAtATime, this, _1), false));
     _al_server->start();
-    if (!_al_thread)
-      _al_thread.reset(new boost::thread(&TfLookup::alExecute, this));
 
-   _check_timer = n.createTimer(ros::Duration(0.1),
+   _check_timer = n.createTimer(ros::Duration(5),
        boost::bind(&TfLookup::periodicCheck, this, _1));
   }
 
-
-  void TfLookup::alExecute()
+  void TfLookup::alRespond(AlServer::GoalHandle gh)
   {
-    while (ros::ok())
+    auto goal = gh.getGoal();
+
+    tf::StampedTransform trans;
+    bool success = lookupTransform(goal->target_frame, goal->source_frame,
+        goal->transform_time, trans);
+
+    if (success)
     {
-      AlServer::GoalHandle gh;
-      {
-        boost::mutex::scoped_lock lock(_al_mutex);
-        if (_al_goals.empty())
-        {
-          _al_cond.wait(lock);
-          continue;
-        }
-
-        gh = _al_goals.front();
-        _al_goals.pop();
-      }
-      if (!gh.getGoal())
-      {
-        gh.setCanceled(AlServer::Result(), "canceled :(");
-        continue;
-      }
-      auto goal = gh.getGoal();
-
-      tf::StampedTransform trans;
-      bool success = lookupTransform(goal->target_frame, goal->source_frame,
-          goal->transform_time, trans);
-
-      if (success)
-      {
-        AlServer::Result res;
-        tf::transformStampedTFToMsg(trans, res.transform);
-        gh.setSucceeded(res);
-      }
-      else
-        gh.setAborted(AlServer::Result(), "could not find a transform");
+      AlServer::Result res;
+      tf::transformStampedTFToMsg(trans, res.transform);
+      gh.setSucceeded(res);
     }
+    else
+      gh.setAborted(AlServer::Result(), "could not find a transform");
   }
 
   void TfLookup::oneAtATime(AlServer::GoalHandle gh)
   {
-    boost::mutex::scoped_lock lock(_al_mutex);
     if (!gh.getGoal())
     {
       gh.setCanceled(AlServer::Result(), "canceled :(");
       return;
     }
     gh.setAccepted();
-
-    _al_goals.push(gh);
-    _al_cond.notify_one();
+    alRespond(gh);
   }
 
   void TfLookup::periodicCheck(const ros::TimerEvent& te)
@@ -96,8 +70,6 @@ namespace pal
      */
     if (ros::Time::now() < _lastTime)
     {
-      boost::mutex::scoped_lock guard(_tfListenerMutex);
-
       ROS_WARN("detected a time rollback, resetting tfListener");
       _tfListener.reset(new tf::TransformListener());
       _tfListener->setExtrapolationLimit(ros::Duration(0.2));
@@ -124,7 +96,6 @@ namespace pal
       tf::StampedTransform& trans)
   {
     std::string err;
-    boost::mutex::scoped_lock guard(_tfListenerMutex);
 
     if (!_tfListener->canTransform(target, source, time, &err))
     {
