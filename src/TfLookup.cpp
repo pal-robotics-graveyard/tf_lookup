@@ -2,12 +2,10 @@
 
 #include <ros/ros.h>
 #include <ros/time.h>
-#include <boost/thread.hpp>
 #include <tf/transform_listener.h>
 #include "pal_tf_lookup/lookupTransform.h"
 #include "pal_tf_lookup/TfLookupAction.h"
 #include <actionlib/server/action_server.h>
-#include <queue>
 
 namespace pal
 {
@@ -26,40 +24,32 @@ namespace pal
         &TfLookup::srvLookupTransform, this);
 
     _al_server.reset(new AlServer(n, "tf_lookup",
-          boost::bind(&TfLookup::oneAtATime, this, _1), false));
+          boost::bind(&TfLookup::alGoalCb, this, _1), false));
     _al_server->start();
+
+    _tf_streamer.start(n, boost::bind(&TfLookup::lookupTransform,
+          this, _1, _2, _3, _4));
 
    _check_timer = n.createTimer(ros::Duration(5),
        boost::bind(&TfLookup::periodicCheck, this, _1));
   }
 
-  void TfLookup::alRespond(AlServer::GoalHandle gh)
-  {
-    auto goal = gh.getGoal();
-
-    tf::StampedTransform trans;
-    bool success = lookupTransform(goal->target_frame, goal->source_frame,
-        goal->transform_time, trans);
-
-    if (success)
-    {
-      AlServer::Result res;
-      tf::transformStampedTFToMsg(trans, res.transform);
-      gh.setSucceeded(res);
-    }
-    else
-      gh.setAborted(AlServer::Result(), "could not find a transform");
-  }
-
-  void TfLookup::oneAtATime(AlServer::GoalHandle gh)
+  void TfLookup::alGoalCb(AlServer::GoalHandle gh)
   {
     if (!gh.getGoal())
     {
-      gh.setCanceled(AlServer::Result(), "canceled :(");
+      gh.setCanceled(AlServer::Result(), "something went wrong, goal canceled");
       return;
     }
     gh.setAccepted();
-    alRespond(gh);
+    auto goal = gh.getGoal();
+    AlServer::Result r;
+
+    if (lookupTransform(goal->target_frame, goal->source_frame,
+          ros::Time(0), r.transform))
+      gh.setSucceeded(r);
+    else
+      gh.setAborted(r);
   }
 
   void TfLookup::periodicCheck(const ros::TimerEvent& te)
@@ -81,17 +71,25 @@ namespace pal
   bool TfLookup::srvLookupTransform(pal_tf_lookup::lookupTransformRequest &req,
       pal_tf_lookup::lookupTransformResponse &res)
   {
-    tf::StampedTransform trans;
+    return lookupTransform(req.target_frame, req.source_frame,
+          req.transform_time, res.transform);
+  }
 
-    bool success = lookupTransform(req.target_frame, req.source_frame,
-          req.transform_time, trans);
+  bool TfLookup::lookupTransform(const std::string& target,
+      const std::string& source, const ros::Time& time,
+      geometry_msgs::TransformStamped& trans)
+  {
+    tf::StampedTransform tr;
+
+    bool success = _lookupTransform(target, source, time, tr);
+
     if (success)
-      tf::transformStampedTFToMsg(trans, res.transform);
+      tf::transformStampedTFToMsg(tr, trans);
 
     return success;
   }
 
-  bool TfLookup::lookupTransform(const std::string& target,
+  bool TfLookup::_lookupTransform(const std::string& target,
       const std::string& source, const ros::Time& time,
       tf::StampedTransform& trans)
   {

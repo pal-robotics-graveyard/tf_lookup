@@ -1,0 +1,10 @@
+# Define the goal
+pal_tf_lookup/Subscription[] transforms
+string subscription_id
+bool update
+---
+# Define the result
+string subscription_id
+string topic
+---
+# Define the feedback

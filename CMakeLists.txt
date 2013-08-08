@@ -25,8 +25,9 @@ rosbuild_genmsg()
 #uncomment if you have defined services
 rosbuild_gensrv()
 
-rosbuild_add_executable(tf_lookup src/TfLookup.cpp src/tf_lookup/main.cpp)
+rosbuild_add_executable(tf_lookup src/TfLookup.cpp src/tf_lookup/main.cpp src/TfStreamServer.cpp src/TfStream.cpp)
 
+rosbuild_add_library(${PROJECT_NAME} src/TfSCTransform.cpp src/TfStreamClient.cpp)
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
