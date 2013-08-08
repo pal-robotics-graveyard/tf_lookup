@@ -9,9 +9,9 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/pal_tf_lookup</url>
 
+  <depend package="actionlib"/>
   <depend package="geometry_msgs" />
   <depend package="tf" />
-  <depend package="actionlib"/>
   <depend package="actionlib_msgs"/>
 
   <export>
