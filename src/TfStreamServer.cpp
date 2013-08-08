@@ -54,6 +54,7 @@ namespace pal
     gh.setAccepted();
     std::string id = generateId();
     _streams[id].reset(new TfStream(_nh, id, _lookup_fun));
+    _streams[id]->updateTransforms(gh.getGoal()->transforms);
     AlServer::Result r;
     r.subscription_id = id;
     r.topic = _nh.resolveName(id);

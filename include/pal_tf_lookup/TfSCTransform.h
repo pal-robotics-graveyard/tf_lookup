@@ -17,7 +17,7 @@ namespace pal
 
     private:
       TfSCTransform(const std::string& key,
-          TfStreamClient* psc, TfStreamClient::Callback& cb);
+          TfStreamClient* psc, const TfStreamClient::Callback& cb);
 
       TfStreamClient*           _psc;
       TfStreamClient::Callback  _cb;

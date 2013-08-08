@@ -17,7 +17,7 @@ namespace pal
   {}
 
   TfStreamClient::Handle TfStreamClient::addTransform(const std::string& target,
-      const std::string& source, Callback& cb)
+      const std::string& source, const Callback& cb)
   {
     return Handle(new TfSCTransform(target + "@" + source, this, cb));
   }
@@ -25,7 +25,7 @@ namespace pal
   void TfStreamClient::updateTransforms()
   {
     /* Retry every second if the server is not reachable */
-    if (!_al_client->isServerConnected())
+    if (!_al_client->isServerConnected() || (!_sub && _sub_id == "pending"))
     {
       _retry_timer = _nh.createTimer(ros::Duration(1.0),
           boost::bind(&TfStreamClient::updateTransforms, this), true);
@@ -37,15 +37,20 @@ namespace pal
     {
       g.update = true;
       g.subscription_id = _sub_id;
-      g.transforms.resize(_transforms.size());
-      for (auto t : _transforms)
-      {
-        pal_tf_lookup::Subscription s;
-        auto mid = t.first.find("@");
-        s.target = t.first.substr(0, mid);
-        s.source = t.first.substr(mid+1);
-        g.transforms.push_back(s);
-      }
+
+      _retry_timer.stop();
+    }
+    else
+      _sub_id = "pending";
+
+    g.transforms.reserve(_transforms.size());
+    for (auto t : _transforms)
+    {
+      pal_tf_lookup::Subscription s;
+      auto mid = t.first.find("@");
+      s.target = t.first.substr(0, mid);
+      s.source = t.first.substr(mid+1);
+      g.transforms.push_back(s);
     }
 
     _al_client->sendGoal(g,
@@ -79,7 +84,32 @@ namespace pal
       return;
 
     if(!_sub)
+    {
+      if (result->topic == "") /* these aren't the droids you're looking for */
+      {
+        updateTransforms();
+        return;
+      }
       _sub.reset(new ros::Subscriber(_nh.subscribe(result->topic, 1,
             &TfStreamClient::mainCallback, this)));
+
+      _sub_id = result->subscription_id;
+    }
+  }
+
+
+  TfSCTransform::TfSCTransform(const std::string& key,
+      TfStreamClient* psc, const TfStreamClient::Callback& cb)
+    : _psc(psc), _cb(cb), _key(key)
+  {
+    ROS_INFO_STREAM("created tf stream for " << _key);
+    _psc->_transforms[key] = this;
+    _psc->updateTransforms();
+  }
+
+  TfSCTransform::~TfSCTransform()
+  {
+    _psc->_transforms.erase(_key);
+    _psc->updateTransforms();
   }
 }

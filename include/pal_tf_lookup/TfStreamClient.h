@@ -62,7 +62,7 @@ namespace pal
        * deleted and the subscription is canceled
        */
       Handle addTransform(const std::string& target,
-          const std::string& source, Callback& cb);
+          const std::string& source, const Callback& cb);
 
     private:
       void mainCallback(const FeedConstPtr& feed);

@@ -17,14 +17,18 @@ namespace pal
 
   void TfStream::updateTransforms(const TrVect& transforms)
   {
+    ROS_DEBUG_STREAM("updating stream " << _id << "with "
+        << transforms.size() << " transforms");
     _transforms = transforms;
   }
 
   void TfStream::publish()
   {
     tf::tfMessage m;
+    ROS_DEBUG_STREAM("publishing for stream " << _id);
     for (auto& t : _transforms)
     {
+      ROS_DEBUG_STREAM("  - transform from " << t.target << " to " << t.source);
       geometry_msgs::TransformStamped trans;
       if (_lookup_fun(t.target, t.source, ros::Time(0), trans))
         m.transforms.push_back(trans);
