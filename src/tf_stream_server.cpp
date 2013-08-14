@@ -23,7 +23,14 @@ namespace tf_lookup
 
   void TfStreamServer::alStreamer()
   {
-    //TODO: check for listeners and clean-up
+    for (auto it=_streams.begin(); it != _streams.end(); )
+    {
+      if (it->second->shouldCleanup())
+        it = _streams.erase(it);
+      else
+        ++it;
+    }
+
     for (auto it : _streams)
       it.second->publish();
   }
