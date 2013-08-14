@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include "pal_tf_lookup/TfLookup.h"
+#include "tf_lookup/tf_lookup.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
   ROS_INFO("tf_lookup starting");
 
   ros::NodeHandle nh;
-  pal::TfLookup tfl;
+  tf_lookup::TfLookup tfl;
   tfl.start(nh);
 
   ros::spin();

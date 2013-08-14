@@ -9,29 +9,23 @@
 #include <ros/ros.h>
 #include <ros/time.h>
 
-/* Forward declarations {{{ */
 namespace geometry_msgs
 { ROS_DECLARE_MESSAGE(TransformStamped); }
 namespace tf
 { ROS_DECLARE_MESSAGE(tfMessage); }
-
-namespace pal_tf_lookup
-{
-  ROS_DECLARE_MESSAGE(TfStreamAction);
-  ROS_DECLARE_MESSAGE(TfStreamGoal);
-  ROS_DECLARE_MESSAGE(TfStreamResult);
-}
-
 namespace actionlib
 {
   template <class T>
   class SimpleActionClient;
   class SimpleClientGoalState;
 }
-/* }}} */
 
-namespace pal
+namespace tf_lookup
 {
+  ROS_DECLARE_MESSAGE(TfStreamAction);
+  ROS_DECLARE_MESSAGE(TfStreamGoal);
+  ROS_DECLARE_MESSAGE(TfStreamResult);
+
   class TfSCTransform;
 
   class TfStreamClient
@@ -46,9 +40,9 @@ namespace pal
         <void(const geometry_msgs::TransformStampedConstPtr&)> Callback;
       typedef std::list<TfSCTransform*>::iterator              ListIter;
       typedef actionlib::SimpleActionClient
-        <pal_tf_lookup::TfStreamAction>                        AlClient;
-      typedef pal_tf_lookup::TfStreamGoal                      AlGoal;
-      typedef pal_tf_lookup::TfStreamResultConstPtr            AlResultConstPtr;
+        <tf_lookup::TfStreamAction>                        AlClient;
+      typedef tf_lookup::TfStreamGoal                      AlGoal;
+      typedef tf_lookup::TfStreamResultConstPtr            AlResultConstPtr;
       typedef tf::tfMessageConstPtr                            FeedConstPtr;
 
     public:

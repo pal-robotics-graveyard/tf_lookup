@@ -6,12 +6,13 @@
 #include <memory>
 #include <ros/ros.h>
 #include <actionlib/server/action_server.h>
-#include "pal_tf_lookup/TfStreamAction.h"
+
+#include "tf_lookup/TfStreamAction.h"
 
 namespace geometry_msgs
 { ROS_DECLARE_MESSAGE(TransformStamped); }
 
-namespace pal
+namespace tf_lookup
 {
   class TfStream;
 
@@ -20,7 +21,7 @@ namespace pal
     friend class TfStream;
 
     private:
-      typedef actionlib::ActionServer<pal_tf_lookup::TfStreamAction> AlServer;
+      typedef actionlib::ActionServer<tf_lookup::TfStreamAction> AlServer;
       typedef boost::shared_ptr<TfStream> StreamPtr;
       typedef boost::function<bool(const std::string&, const std::string&,
           const ros::Time&, geometry_msgs::TransformStamped&)> LookupFun;

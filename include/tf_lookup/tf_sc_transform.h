@@ -1,9 +1,9 @@
 #ifndef TFSCTRANSFORM_H
 #define TFSCTRANSFORM_H
 
-#include "pal_tf_lookup/TfStreamClient.h"
+#include "tf_lookup/tf_stream_client.h"
 
-namespace pal
+namespace tf_lookup
 {
   class TfSCTransform
   {

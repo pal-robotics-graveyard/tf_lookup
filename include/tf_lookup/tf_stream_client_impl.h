@@ -1,12 +1,13 @@
-#include "pal_tf_lookup/TfStreamClient.h"
+#include "tf_lookup/tf_stream_client.h"
 
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf/tfMessage.h>
-#include "pal_tf_lookup/TfStreamAction.h"
-#include "pal_tf_lookup/TfSCTransform.h"
 
-namespace pal
+#include "tf_lookup/TfStreamAction.h"
+#include "tf_lookup/tf_sc_transform.h"
+
+namespace tf_lookup
 {
   TfStreamClient::TfStreamClient(ros::NodeHandle& nh) : _nh(nh)
   {
@@ -46,7 +47,7 @@ namespace pal
     g.transforms.reserve(_transforms.size());
     for (auto t : _transforms)
     {
-      pal_tf_lookup::Subscription s;
+      tf_lookup::Subscription s;
       auto mid = t.first.find("@");
       s.target = t.first.substr(0, mid);
       s.source = t.first.substr(mid+1);

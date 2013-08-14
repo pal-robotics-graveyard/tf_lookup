@@ -2,9 +2,9 @@
 \mainpage
 \htmlinclude manifest.html
 
-\b pal_tf_lookup 
+\b tf_lookup
 
-<!-- 
+<!--
 Provide an overview of your package.
 -->
 

@@ -1,13 +1,14 @@
-#include "pal_tf_lookup/TfLookup.h"
+#include "tf_lookup/tf_lookup.h"
 
 #include <ros/ros.h>
 #include <ros/time.h>
 #include <tf/transform_listener.h>
-#include "pal_tf_lookup/lookupTransform.h"
-#include "pal_tf_lookup/TfLookupAction.h"
 #include <actionlib/server/action_server.h>
 
-namespace pal
+#include "tf_lookup/lookupTransform.h"
+#include "tf_lookup/TfLookupAction.h"
+
+namespace tf_lookup
 {
   TfLookup::TfLookup()
   {
@@ -68,8 +69,8 @@ namespace pal
     _lastTime = ros::Time::now();
   }
 
-  bool TfLookup::srvLookupTransform(pal_tf_lookup::lookupTransformRequest &req,
-      pal_tf_lookup::lookupTransformResponse &res)
+  bool TfLookup::srvLookupTransform(tf_lookup::lookupTransformRequest &req,
+      tf_lookup::lookupTransformResponse &res)
   {
     return lookupTransform(req.target_frame, req.source_frame,
           req.transform_time, res.transform);

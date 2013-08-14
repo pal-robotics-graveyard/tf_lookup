@@ -1,13 +1,13 @@
 <package>
-  <description brief="pal_tf_lookup">
+  <description brief="tf_lookup">
 
-     pal_tf_lookup
+     tf_lookup
 
   </description>
-  <author>System User</author>
+  <author>Paul Mathieu</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/pal_tf_lookup</url>
+  <url>http://ros.org/wiki/tf_lookup</url>
 
   <depend package="actionlib"/>
   <depend package="geometry_msgs" />

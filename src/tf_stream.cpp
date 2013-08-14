@@ -1,9 +1,9 @@
-#include "pal_tf_lookup/TfStream.h"
+#include "tf_lookup/tf_stream.h"
 
-#include "pal_tf_lookup/Subscription.h"
+#include "tf_lookup/Subscription.h"
 #include <tf/tfMessage.h>
 
-namespace pal
+namespace tf_lookup
 {
   TfStream::TfStream(ros::NodeHandle& nh, const std::string& id,
       const LookupFun& lookup_fun) :

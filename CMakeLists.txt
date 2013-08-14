@@ -1,36 +1,61 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(tf_lookup)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+if(USE_ROSBUILD)
 
-rosbuild_find_ros_package(actionlib_msgs)
-include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
-genaction()
+  include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
-rosbuild_init()
+  rosbuild_find_ros_package(actionlib_msgs)
+  include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
+  genaction()
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+  rosbuild_init()
 
-#uncomment if you have defined messages
-rosbuild_genmsg()
-#uncomment if you have defined services
-rosbuild_gensrv()
+  set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+  set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-rosbuild_add_executable(tf_lookup src/TfLookup.cpp src/tf_lookup/main.cpp src/TfStreamServer.cpp src/TfStream.cpp)
+  rosbuild_genmsg()
+  rosbuild_gensrv()
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+  rosbuild_add_executable(tf_lookup
+      src/tf_lookup_main.cpp
+      src/tf_lookup.cpp
+      src/tf_stream.cpp
+      src/tf_stream_server.cpp)
+
+else()
+
+  find_package(catkin REQUIRED COMPONENTS roscpp genmsg actionlib_msgs tf)
+
+  add_action_files(DIRECTORY action FILES TfLookup.action TfStream.action)
+  add_service_files(FILES lookupTransform.srv)
+  add_message_files(FILES Subscription.msg)
+
+  generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
+
+  catkin_package(
+      INCLUDE_DIRS include
+      )
+
+  include_directories(include ${catkin_INCLUDE_DIRS})
+
+  add_executable(tf_lookup
+      src/tf_lookup_main.cpp
+      src/tf_lookup.cpp
+      src/tf_stream.cpp
+      src/tf_stream_server.cpp)
+
+  target_link_libraries(tf_lookup ${catkin_LIBRARIES})
+  add_dependencies(tf_lookup ${PROJECT_NAME}_gencpp)
+
+  install(TARGETS tf_lookup
+     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+   )
+
+  ## Mark cpp header files for installation
+  install(DIRECTORY include/${PROJECT_NAME}/
+     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+     FILES_MATCHING PATTERN "*.h"
+  )
+
+endif()

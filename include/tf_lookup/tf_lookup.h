@@ -4,10 +4,11 @@
 #include <ros/ros.h>
 #include <ros/time.h>
 #include <actionlib/server/action_server.h>
-#include "pal_tf_lookup/TfLookupAction.h"
-#include "pal_tf_lookup/TfStreamServer.h"
 
-namespace pal_tf_lookup
+#include "tf_lookup/TfLookupAction.h"
+#include "tf_lookup/tf_stream_server.h"
+
+namespace tf_lookup
 {
   ROS_DECLARE_MESSAGE(lookupTransformRequest);
   ROS_DECLARE_MESSAGE(lookupTransformResponse);
@@ -22,12 +23,12 @@ namespace tf
   class StampedTransform;
 }
 
-namespace pal
+namespace tf_lookup
 {
   class TfLookup
   {
     private:
-      typedef actionlib::ActionServer<pal_tf_lookup::TfLookupAction> AlServer;
+      typedef actionlib::ActionServer<tf_lookup::TfLookupAction> AlServer;
 
     public:
       TfLookup();
@@ -40,8 +41,8 @@ namespace pal
 
     private:
       void periodicCheck(const ros::TimerEvent& te);
-      bool srvLookupTransform(pal_tf_lookup::lookupTransformRequest &req,
-          pal_tf_lookup::lookupTransformResponse &res);
+      bool srvLookupTransform(tf_lookup::lookupTransformRequest &req,
+          tf_lookup::lookupTransformResponse &res);
       bool _lookupTransform(const std::string& target,
           const std::string& source, const ros::Time& time,
           tf::StampedTransform& trans);

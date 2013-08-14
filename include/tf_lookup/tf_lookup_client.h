@@ -7,12 +7,13 @@
 #include <ros/ros.h>
 #include <boost/function.hpp>
 #include <actionlib/client/action_client.h>
-#include "pal_tf_lookup/TfLookupAction.h"
+
+#include "tf_lookup/TfLookupAction.h"
 
 namespace geometry_msgs
 { ROS_DECLARE_MESSAGE(TransformStamped); }
 
-namespace pal
+namespace tf_lookup
 {
   class TfLookupClient
   {
@@ -20,8 +21,8 @@ namespace pal
       typedef geometry_msgs::TransformStamped                        Transform;
       typedef geometry_msgs::TransformStampedConstPtr         TransformConstPtr;
       typedef boost::function<void(bool, const TransformConstPtr&)>  Callback;
-      typedef actionlib::ActionClient<pal_tf_lookup::TfLookupAction> AlClient;
-      typedef pal_tf_lookup::TfLookupGoal                            Goal;
+      typedef actionlib::ActionClient<tf_lookup::TfLookupAction> AlClient;
+      typedef tf_lookup::TfLookupGoal                            Goal;
       typedef std::pair<AlClient::GoalHandle, Callback>              GhCbPair;
 
       struct gh_compare : public std::unary_function<GhCbPair, bool>

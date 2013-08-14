@@ -5,18 +5,17 @@
 #include <vector>
 #include <ros/ros.h>
 
-namespace pal_tf_lookup
-{ ROS_DECLARE_MESSAGE(Subscription); }
-
 namespace geometry_msgs
 { ROS_DECLARE_MESSAGE(TransformStamped); }
 
-namespace pal
+namespace tf_lookup
 {
+  ROS_DECLARE_MESSAGE(Subscription);
+
   class TfStream
   {
     private:
-      typedef std::vector<pal_tf_lookup::Subscription> TrVect;
+      typedef std::vector<tf_lookup::Subscription> TrVect;
       typedef boost::function<bool(const std::string&, const std::string&,
           const ros::Time&, geometry_msgs::TransformStamped&)> LookupFun;
 

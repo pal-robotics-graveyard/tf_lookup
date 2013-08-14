@@ -1,9 +1,9 @@
-#include "pal_tf_lookup/TfLookupClient.h"
+#include "tf_lookup/tf_lookup_client.h"
 
 #include <geometry_msgs/TransformStamped.h>
 #include <ros/time.h>
 
-namespace pal
+namespace tf_lookup
 {
   TfLookupClient::TfLookupClient(ros::NodeHandle &nh)
     : _nh(nh)

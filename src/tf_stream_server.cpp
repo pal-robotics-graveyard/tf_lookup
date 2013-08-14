@@ -1,8 +1,8 @@
-#include "pal_tf_lookup/TfStreamServer.h"
+#include "tf_lookup/tf_stream_server.h"
 
-#include "pal_tf_lookup/TfStream.h"
+#include "tf_lookup/tf_stream.h"
 
-namespace pal
+namespace tf_lookup
 {
   TfStreamServer::TfStreamServer()
   {}
