@@ -9,7 +9,8 @@ namespace tf_lookup
       const LookupFun& lookup_fun) :
     _id(id),
     _pub(nh.advertise<tf::tfMessage>(_id, 10)),
-    _lookup_fun(lookup_fun)
+    _lookup_fun(lookup_fun),
+    _last_subscriber_time(ros::Time::now())
   {}
 
   TfStream::~TfStream()
@@ -20,6 +21,17 @@ namespace tf_lookup
     ROS_DEBUG_STREAM("updating stream " << _id << "with "
         << transforms.size() << " transforms");
     _transforms = transforms;
+  }
+
+  bool TfStream::shouldCleanup()
+  {
+    if (_pub.getNumSubscribers() > 0)
+      _last_subscriber_time = ros::Time::now();
+
+    if (ros::Time::now().toSec() - _last_subscriber_time.toSec() < 5.0) //XXX: magic value
+      return false;
+
+    return true;
   }
 
   void TfStream::publish()
