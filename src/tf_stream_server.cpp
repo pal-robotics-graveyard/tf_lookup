@@ -10,10 +10,11 @@ namespace tf_lookup
   TfStreamServer::~TfStreamServer()
   {}
 
-  void TfStreamServer::start(ros::NodeHandle& nh, const LookupFun& lookup_fun)
+  void TfStreamServer::start(ros::NodeHandle& nh, const LookupFun& lookup_fun, const ResolveFun& resolve_fun)
   {
     _nh = nh;
     _lookup_fun = lookup_fun;
+    _resolve_fun = resolve_fun;
     _al_server.reset(new AlServer(_nh, "tf_stream",
           boost::bind(&TfStreamServer::alGoalCb, this, _1), false));
     _al_server->start();
@@ -44,7 +45,8 @@ namespace tf_lookup
 
   void TfStreamServer::updateStream(AlServer::GoalHandle gh)
   {
-    const std::string& id = gh.getGoal()->subscription_id;
+    const auto& goal = gh.getGoal();
+    const std::string& id = goal->subscription_id;
     if (_streams.find(id) == _streams.end())
     {
       gh.setCanceled();
@@ -52,7 +54,17 @@ namespace tf_lookup
     }
 
     gh.setAccepted();
-    _streams[id]->updateTransforms(gh.getGoal()->transforms);
+
+    TrVect transforms;
+    int ts = goal->transforms.size();
+    transforms.resize(ts);
+    for (int i=0; i < ts; ++i)
+    {
+      transforms[i].target = _resolve_fun(goal->transforms[i].target);
+      transforms[i].source = _resolve_fun(goal->transforms[i].source);
+    }
+
+    _streams[id]->updateTransforms(transforms);
     gh.setSucceeded();
   }
 

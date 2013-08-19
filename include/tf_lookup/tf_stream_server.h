@@ -25,12 +25,14 @@ namespace tf_lookup
       typedef boost::shared_ptr<TfStream> StreamPtr;
       typedef boost::function<bool(const std::string&, const std::string&,
           const ros::Time&, geometry_msgs::TransformStamped&)> LookupFun;
+      typedef boost::function<std::string(const std::string&)> ResolveFun;
+      typedef std::vector<tf_lookup::Subscription> TrVect;
 
     public:
       TfStreamServer();
       virtual ~TfStreamServer();
 
-      void start(ros::NodeHandle& nh, const LookupFun& lookup_fun);
+      void start(ros::NodeHandle& nh, const LookupFun& lookup_fun, const ResolveFun& resolve_fun);
 
     private:
       void alGoalCb(AlServer::GoalHandle gh);
@@ -45,6 +47,7 @@ namespace tf_lookup
       ros::Timer                       _al_stream_timer;
       std::map<std::string, StreamPtr> _streams;
       LookupFun                        _lookup_fun;
+      ResolveFun                       _resolve_fun;
   };
 }
 
