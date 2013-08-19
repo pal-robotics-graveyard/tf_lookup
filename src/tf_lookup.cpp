@@ -28,8 +28,8 @@ namespace tf_lookup
           boost::bind(&TfLookup::alGoalCb, this, _1), false));
     _al_server->start();
 
-    _tf_streamer.start(n, boost::bind(&TfLookup::lookupTransform,
-          this, _1, _2, _3, _4));
+    _tf_streamer.start(n, boost::bind(&TfLookup::lookupTransform, this, _1, _2, _3, _4),
+        boost::bind(&tf::TransformListener::resolve, _tfListener.get(), _1));
 
    _check_timer = n.createTimer(ros::Duration(5),
        boost::bind(&TfLookup::periodicCheck, this, _1));
