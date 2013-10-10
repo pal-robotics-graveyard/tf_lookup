@@ -47,7 +47,7 @@ namespace tf_lookup
 {
   TfStreamClient::TfStreamClient(ros::NodeHandle& nh) : _nh(nh)
   {
-    _al_client.reset(new AlClient(_nh, "/tf_stream"));
+    _al_client.reset(new AlClient(_nh, "tf_stream"));
   }
 
   TfStreamClient::~TfStreamClient()

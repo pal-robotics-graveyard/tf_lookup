@@ -44,7 +44,7 @@ namespace tf_lookup
   TfLookupClient::TfLookupClient(ros::NodeHandle &nh)
     : _nh(nh)
   {
-    _al_client.reset(new AlClient(_nh, "/tf_lookup"));
+    _al_client.reset(new AlClient(_nh, "tf_lookup"));
   }
 
   TfLookupClient::~TfLookupClient()
