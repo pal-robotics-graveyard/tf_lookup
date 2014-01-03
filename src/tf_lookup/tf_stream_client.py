@@ -1,4 +1,3 @@
-import roslib; roslib.load_manifest('tf_lookup')
 import actionlib
 import rospy
 import tf_lookup.msg as TLM
