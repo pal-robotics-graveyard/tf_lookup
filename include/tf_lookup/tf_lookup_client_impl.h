@@ -61,8 +61,9 @@ namespace tf_lookup
     goal.source_frame = source;
     goal.transform_time = ros::Time(0);
 
-    _al_goals.push_back(GhCbPair(_al_client->sendGoal(goal,
-          boost::bind(&TfLookupClient::tfAlTransitionCb, this, _1)), cb));
+    auto gh = _al_client->sendGoal(goal,
+          boost::bind(&TfLookupClient::tfAlTransitionCb, this, _1));
+    _al_goals.emplace_back(gh, cb);
 
     return true;
   }

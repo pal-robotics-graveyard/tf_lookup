@@ -39,7 +39,7 @@
 
 #include <memory>
 #include <string>
-#include <vector>
+#include <list>
 #include <ros/ros.h>
 #include <boost/function.hpp>
 #include <actionlib/client/action_client.h>
@@ -79,8 +79,8 @@ namespace tf_lookup
       void tfAlTransitionCb(AlClient::GoalHandle gh);
 
       ros::NodeHandle           _nh;
-      std::unique_ptr<AlClient> _al_client;
-      std::vector<GhCbPair>     _al_goals;
+      std::shared_ptr<AlClient> _al_client;
+      std::list<GhCbPair>       _al_goals;
   };
 }
 
