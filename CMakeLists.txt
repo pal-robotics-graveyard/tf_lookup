@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tf_lookup)
 
-find_package(catkin REQUIRED COMPONENTS roscpp genmsg actionlib_msgs tf pal_cmake)
+find_package(catkin REQUIRED COMPONENTS roscpp genmsg actionlib_msgs tf)
 
 catkin_python_setup()
 
@@ -11,7 +11,8 @@ add_message_files(FILES Subscription.msg)
 
 generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 
-pal_package()
+set(CMAKE_CXX_FLAGS "-std=c++0x")
+
 catkin_package(
     INCLUDE_DIRS include
     CATKIN_DEPENDS tf
