@@ -3,6 +3,8 @@ project(tf_lookup)
 
 find_package(catkin REQUIRED COMPONENTS roscpp genmsg actionlib_msgs tf pal_cmake)
 
+catkin_python_setup()
+
 add_action_files(DIRECTORY action FILES TfLookup.action TfStream.action)
 add_service_files(FILES lookupTransform.srv)
 add_message_files(FILES Subscription.msg)
