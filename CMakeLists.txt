@@ -11,7 +11,7 @@ add_message_files(FILES Subscription.msg)
 
 generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 catkin_package(
     INCLUDE_DIRS include
