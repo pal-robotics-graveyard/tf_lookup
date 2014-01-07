@@ -43,6 +43,40 @@
 #include "tf_lookup/TfStreamAction.h"
 #include "tf_lookup/tf_sc_transform.h"
 
+void strip(std::string& str, char c)
+{
+  str.erase(
+    std::remove_if(
+      str.begin(), str.end(),
+      [c](char c_i) -> bool {
+        return c_i == c;
+      }),
+    str.end());
+}
+
+std::string key_from_transformation(const std::string& target, const std::string& source)
+{
+  std::string t = target;
+  std::string s = source;
+
+  strip(t, '/');
+  strip(s, '/');
+
+  return t + "@" + s;
+}
+
+tf_lookup::Subscription transformation_from_key(const std::string& key)
+{
+  tf_lookup::Subscription s;
+
+  auto mid = key.find("@");
+  s.target = key.substr(0, mid);
+  s.source = key.substr(mid+1);
+
+  return s;
+}
+
+
 namespace tf_lookup
 {
   TfStreamClient::TfStreamClient(ros::NodeHandle& nh) : _nh(nh)
@@ -56,7 +90,9 @@ namespace tf_lookup
   TfStreamClient::Handle TfStreamClient::addTransform(const std::string& target,
       const std::string& source, const Callback& cb)
   {
-    return Handle(new TfSCTransform(target + "@" + source, this, cb));
+    const std::string key = key_from_transformation(target, source);
+
+    return Handle(new TfSCTransform(key, this, cb));
   }
 
   void TfStreamClient::updateTransforms()
@@ -83,11 +119,7 @@ namespace tf_lookup
     g.transforms.reserve(_transforms.size());
     for (auto t : _transforms)
     {
-      tf_lookup::Subscription s;
-      auto mid = t.first.find("@");
-      s.target = t.first.substr(0, mid);
-      s.source = t.first.substr(mid+1);
-      g.transforms.push_back(s);
+      g.transforms.push_back(transformation_from_key(t.first));
     }
 
     _al_client->sendGoal(g,
@@ -100,7 +132,7 @@ namespace tf_lookup
     {
       const std::string& parent = t.header.frame_id;
       const std::string& child = t.child_frame_id;
-      std::string tr = parent + "@" + child;
+      const std::string tr = key_from_transformation(parent, child);
 
       auto it = _transforms.find(tr);
       if (it == _transforms.end())
