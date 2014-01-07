@@ -1,6 +1,7 @@
 import actionlib
 import rospy
 import tf_lookup.msg as TLM
+import tf_lookup.tf_common as TLC
 import tf.msg as TM
 
 class TfLookupClient:
@@ -11,7 +12,7 @@ class TfLookupClient:
         self.ghs = []
 
     def query_transform(self, target, source, cb):
-        key = "{}@{}".format(target, source)
+        key = TLC.key_from_transform(target, source)
         if key in self.cbs:
             if rospy.get_time() - self.ts[key] > 1.0:
                 del self.ts[key]
