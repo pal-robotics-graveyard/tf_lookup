@@ -1,10 +1,8 @@
 import actionlib
 import rospy
 import tf_lookup.msg as TLM
+import tf_lookup.tf_common as TLC
 import tf.msg as TM
-
-def key_from_transform(target, source):
-    return "{}@{}".format(target.strip("/"), source.strip("/"))
 
 class TfStreamClient:
     def __init__(self):
@@ -14,7 +12,7 @@ class TfStreamClient:
         self.sub_id = None
 
     def add_transform(self, target, source, cb):
-        key = key_from_transform(target, source)
+        key = TLC.key_from_transform(target, source)
         self.transforms[key] = {'cb': cb, 'sub': TLM.Subscription(target, source)}
         goal = TLM.TfStreamGoal()
         if self.sub_id is not None:
@@ -32,7 +30,7 @@ class TfStreamClient:
 
     def _main_cb(self, data):
         for t in data.transforms:
-            key = key_from_transform(t.header.frame_id, t.child_frame_id)
+            key = TLC.key_from_transform(t.header.frame_id, t.child_frame_id)
             if key not in self.transforms:
                 rospy.logwarn("we have received an unsollicited transform: [{}]->[{}]".format(
                     t.header.frame_id, t.child_frame_id))
