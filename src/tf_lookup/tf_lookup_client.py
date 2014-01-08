@@ -22,7 +22,10 @@ class TfLookupClient:
         self.cbs[key] = cb
         self.ts[key] = rospy.get_time()
         goal = TLM.TfLookupGoal(target, source, rospy.Time(0.0))
-        self.ghs.append(self.al_client.send_goal(goal, transition_cb=self._al_cb))
+        try:
+            self.ghs.append(self.al_client.send_goal(goal, transition_cb=self._al_cb))
+        except rospy.ROSException as e:
+            rospy.logfatal("Failed to send goal: %s", e.message)
 
     def _al_cb(self, gh):
         if gh.get_comm_state() != actionlib.CommState.DONE:
