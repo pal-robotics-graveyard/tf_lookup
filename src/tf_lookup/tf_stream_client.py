@@ -10,10 +10,18 @@ class TfStreamClient:
         self.transforms = {}
         self.cb = None
         self.sub_id = None
+        self.last_update = 0
 
     def add_transform(self, target, source, cb):
         key = TLC.key_from_transform(target, source)
+        if key in self.transforms:
+            if rospy.get_time() - self.last_update < 1.0:
+                return
         self.transforms[key] = {'cb': cb, 'sub': TLM.Subscription(target, source)}
+        self.last_update = rospy.get_time()
+        self._update_transforms()
+
+    def _update_transforms(self):
         goal = TLM.TfStreamGoal()
         if self.sub_id is not None:
             goal.update = True
