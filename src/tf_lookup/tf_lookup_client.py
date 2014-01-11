@@ -14,10 +14,7 @@ class TfLookupClient:
     def query_transform(self, target, source, cb):
         key = TLC.key_from_transform(target, source)
         if key in self.cbs:
-            if rospy.get_time() - self.ts[key] > 1.0:
-                del self.ts[key]
-                del self.cbs[key]
-            else:
+            if rospy.get_time() - self.ts[key] < 1.0:
                 return
         self.cbs[key] = cb
         self.ts[key] = rospy.get_time()
