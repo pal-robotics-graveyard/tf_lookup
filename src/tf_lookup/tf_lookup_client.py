@@ -12,6 +12,8 @@ class TfLookupClient:
         self.ghs = []
 
     def query_transform(self, target, source, cb):
+        target = TLC.sanitize_frame(target)
+        source = TLC.sanitize_frame(source)
         key = TLC.key_from_transform(target, source)
         if key in self.cbs:
             if rospy.get_time() - self.ts[key] < 1.0:
