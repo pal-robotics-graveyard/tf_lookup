@@ -13,6 +13,8 @@ class TfStreamClient:
         self.last_update = 0
 
     def add_transform(self, target, source, cb):
+        target = TLC.sanitize_frame(target)
+        source = TLC.sanitize_frame(source)
         key = TLC.key_from_transform(target, source)
         if key in self.transforms:
             if rospy.get_time() - self.last_update < 1.0:
