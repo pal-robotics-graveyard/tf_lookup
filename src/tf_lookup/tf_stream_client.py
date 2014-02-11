@@ -29,6 +29,10 @@ class TfStreamClient:
             goal.update = True
             goal.subscription_id = self.sub_id
         goal.transforms = [x['sub'] for x in self.transforms.itervalues()]
+        # We can't use a timeout here because of github.com/ros/actionlib/issues/19
+        self.al_client.wait_for_server()
+        #if not self.al_client.wait_for_server(timeout=rospy.Duration(10)):
+        #    raise IOError('Could not connect to tf_stream server.')
         self.al_client.send_goal(goal, done_cb=self._al_cb)
 
     def _al_cb(self, status, result):
