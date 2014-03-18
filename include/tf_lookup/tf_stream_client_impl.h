@@ -34,6 +34,9 @@
 
 /** \author Paul Mathieu. */
 
+#ifndef TFSTREAMCLIENT_IMPL_H
+#define TFSTREAMCLIENT_IMPL_H
+
 #include "tf_lookup/tf_stream_client.h"
 
 #include <ros/ros.h>
@@ -182,3 +185,5 @@ namespace tf_lookup
     _psc->updateTransforms();
   }
 }
+
+#endif
