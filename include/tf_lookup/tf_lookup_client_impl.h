@@ -34,6 +34,9 @@
 
 /** \author Paul Mathieu. */
 
+#ifndef TFLOOKUPCLIENT_IMPL_H
+#define TFLOOKUPCLIENT_IMPL_H
+
 #include "tf_lookup/tf_lookup_client.h"
 
 #include <geometry_msgs/TransformStamped.h>
@@ -94,3 +97,5 @@ namespace tf_lookup
     }
   }
 }
+
+#endif
