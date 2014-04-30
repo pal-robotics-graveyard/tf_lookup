@@ -39,7 +39,7 @@
 
 #include <string>
 #include <map>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 #include <ros/ros.h>
 #include <actionlib/server/action_server.h>
 
@@ -78,7 +78,7 @@ namespace tf_lookup
       void updateStream(AlServer::GoalHandle gh);
       void addStream(AlServer::GoalHandle gh);
 
-      std::unique_ptr<AlServer>        _al_server;
+      boost::shared_ptr<AlServer>      _al_server;
       ros::NodeHandle                  _nh;
       ros::Timer                       _al_stream_timer;
       std::map<std::string, StreamPtr> _streams;

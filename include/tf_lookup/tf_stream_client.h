@@ -39,7 +39,6 @@
 
 #include <map>
 #include <string>
-#include <memory>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ros/ros.h>
@@ -102,8 +101,8 @@ namespace tf_lookup
 
       std::map<std::string, TfSCTransform*>  _transforms;
       ros::NodeHandle                        _nh;
-      std::unique_ptr<ros::Subscriber>       _sub;
-      std::unique_ptr<AlClient>              _al_client;
+      boost::shared_ptr<ros::Subscriber>     _sub;
+      boost::shared_ptr<AlClient>            _al_client;
       std::string                            _sub_id;
       ros::Timer                             _retry_timer;
   };
