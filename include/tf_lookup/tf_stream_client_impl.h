@@ -39,6 +39,7 @@
 
 #include "tf_lookup/tf_stream_client.h"
 
+#include <boost/foreach.hpp>
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf/tfMessage.h>
@@ -72,7 +73,7 @@ tf_lookup::Subscription transformation_from_key(const std::string& key)
 {
   tf_lookup::Subscription s;
 
-  auto mid = key.find("@");
+  size_t mid = key.find("@");
   s.target = key.substr(0, mid);
   s.source = key.substr(mid+1);
 
@@ -82,6 +83,8 @@ tf_lookup::Subscription transformation_from_key(const std::string& key)
 
 namespace tf_lookup
 {
+  typedef std::map<std::string, TfSCTransform*> Transforms_T;
+
   TfStreamClient::TfStreamClient(ros::NodeHandle& nh) : _nh(nh)
   {
     _al_client.reset(new AlClient(_nh, "tf_stream"));
@@ -120,7 +123,7 @@ namespace tf_lookup
       _sub_id = "pending";
 
     g.transforms.reserve(_transforms.size());
-    for (auto t : _transforms)
+    BOOST_FOREACH (const Transforms_T::value_type& t, _transforms)
     {
       g.transforms.push_back(transformation_from_key(t.first));
     }
@@ -131,13 +134,13 @@ namespace tf_lookup
 
   void TfStreamClient::mainCallback(const FeedConstPtr& feed)
   {
-    for (auto t : feed->transforms)
+    BOOST_FOREACH (const geometry_msgs::TransformStamped& t, feed->transforms)
     {
       const std::string& parent = t.header.frame_id;
       const std::string& child = t.child_frame_id;
       const std::string tr = key_from_transformation(parent, child);
 
-      auto it = _transforms.find(tr);
+      Transforms_T::iterator it = _transforms.find(tr);
       if (it == _transforms.end())
       {
         ROS_WARN("we have received an unsollicited transform: [%s]->[%s]",

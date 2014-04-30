@@ -38,6 +38,7 @@
 
 #include "tf_lookup/Subscription.h"
 #include <tf/tfMessage.h>
+#include <boost/foreach.hpp>
 
 namespace tf_lookup
 {
@@ -74,7 +75,7 @@ namespace tf_lookup
   {
     tf::tfMessage m;
     ROS_DEBUG_STREAM("publishing for stream " << _id);
-    for (auto& t : _transforms)
+    BOOST_FOREACH(Subscription& t, _transforms)
     {
       ROS_DEBUG_STREAM("  - transform from " << t.target << " to " << t.source);
       geometry_msgs::TransformStamped trans;

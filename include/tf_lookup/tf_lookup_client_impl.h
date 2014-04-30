@@ -64,7 +64,7 @@ namespace tf_lookup
     goal.source_frame = source;
     goal.transform_time = ros::Time(0);
 
-    auto gh = _al_client->sendGoal(goal,
+    AlClient::GoalHandle gh = _al_client->sendGoal(goal,
           boost::bind(&TfLookupClient::tfAlTransitionCb, this, _1));
     _al_goals.emplace_back(gh, cb);
 
@@ -73,7 +73,8 @@ namespace tf_lookup
 
   void TfLookupClient::tfAlTransitionCb(AlClient::GoalHandle gh)
   {
-    auto it = std::find_if(_al_goals.begin(), _al_goals.end(), gh_compare(gh));
+    std::list<GhCbPair>::iterator it =
+      std::find_if(_al_goals.begin(), _al_goals.end(), gh_compare(gh));
     if (it == _al_goals.end())
       return;
 

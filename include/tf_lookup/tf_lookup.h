@@ -88,11 +88,11 @@ namespace tf_lookup
       void alGoalCb(AlServer::GoalHandle gh);
 
       ros::ServiceServer                     _srvLookupTransform;
-      std::unique_ptr<tf::TransformListener> _tfListener;
+      boost::shared_ptr<tf::TransformListener> _tfListener;
       ros::Time                              _lastTime;
       ros::Timer                             _check_timer;
       TfStreamServer                         _tf_streamer;
-      std::unique_ptr<AlServer>              _al_server;
+      boost::shared_ptr<AlServer>              _al_server;
   };
 }
 

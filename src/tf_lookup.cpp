@@ -79,7 +79,7 @@ namespace tf_lookup
       return;
     }
     gh.setAccepted();
-    auto goal = gh.getGoal();
+    AlServer::GoalConstPtr goal = gh.getGoal();
     AlServer::Result r;
 
     if (lookupTransform(goal->target_frame, goal->source_frame,

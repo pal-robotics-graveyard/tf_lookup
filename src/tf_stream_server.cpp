@@ -60,16 +60,17 @@ namespace tf_lookup
 
   void TfStreamServer::alStreamer()
   {
-    for (auto it=_streams.begin(); it != _streams.end(); )
+    std::map<std::string, StreamPtr>::iterator it;
+    for (it = _streams.begin(); it != _streams.end(); )
     {
       if (it->second->shouldCleanup())
-        it = _streams.erase(it);
+        _streams.erase(it++);
       else
         ++it;
     }
 
-    for (auto it : _streams)
-      it.second->publish();
+    for (it = _streams.begin(); it != _streams.end(); ++it)
+      it->second->publish();
   }
 
   std::string TfStreamServer::generateId()
@@ -81,7 +82,7 @@ namespace tf_lookup
 
   void TfStreamServer::updateStream(AlServer::GoalHandle gh)
   {
-    const auto& goal = gh.getGoal();
+    const AlServer::GoalConstPtr& goal = gh.getGoal();
     const std::string& id = goal->subscription_id;
     if (_streams.find(id) == _streams.end())
     {

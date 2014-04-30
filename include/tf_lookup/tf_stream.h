@@ -70,14 +70,14 @@ namespace tf_lookup
 
       virtual ~TfStream();
 
-      TfStream(const TfStream& rhs)             = delete;
-      TfStream& operator=(const TfStream& rhs)  = delete;
-
       void updateTransforms(const TrVect& transforms);
       void publish();
       bool shouldCleanup();
 
     private:
+      TfStream(const TfStream& rhs);
+      TfStream& operator=(const TfStream& rhs);
+
       std::string               _id;
       ros::Publisher            _pub;
       TrVect                    _transforms;
