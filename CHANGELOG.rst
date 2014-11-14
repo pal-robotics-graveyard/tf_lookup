@@ -2,8 +2,8 @@
 Changelog for package tf_lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2014-11-14)
+------------------
 * Fixes catkin_lint warnings
 * Contributors: Enrique Fernandez
 
