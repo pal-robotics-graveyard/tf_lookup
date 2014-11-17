@@ -2,6 +2,11 @@
 Changelog for package tf_lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* backports to c++03
+* Contributors: Enrique Fernandez
+
 0.1.2 (2014-11-17)
 ------------------
 * Backport from C++11 to C++03
