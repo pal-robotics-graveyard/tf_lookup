@@ -2,6 +2,11 @@
 Changelog for package tf_lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Backport from C++11 to C++03
+* Contributors: Paul Mathieu
+
 0.1.1 (2014-11-14)
 ------------------
 * Fixes catkin_lint warnings
