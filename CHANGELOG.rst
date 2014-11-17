@@ -2,8 +2,8 @@
 Changelog for package tf_lookup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2014-11-17)
+------------------
 * Backport from C++11 to C++03
 * Contributors: Paul Mathieu
 
