@@ -79,7 +79,7 @@ namespace tf_lookup
       void tfAlTransitionCb(AlClient::GoalHandle gh);
 
       ros::NodeHandle           _nh;
-      std::shared_ptr<AlClient> _al_client;
+      boost::shared_ptr<AlClient> _al_client;
       std::list<GhCbPair>       _al_goals;
   };
 }
